@@ -1,0 +1,30 @@
+.delete-confirm-modal {
+  .modal-body {
+    .confirm-delete-image {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      margin-top: 10px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .delete-confirm-modal {
+    .modal-body {
+      .confirm-delete-image {
+        max-width: 120px;
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .delete-confirm-modal {
+    .modal-body {
+      .confirm-delete-image {
+        max-width: 100px;
+      }
+    }
+  }
+}

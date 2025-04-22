@@ -1,0 +1,721 @@
+
+.subject-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 10px 15px;
+  border: none;
+  background-color:rgba(23, 76, 114, 1);
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.pagination span {
+  margin: 0 10px;
+
+}
+.messages-table {
+
+  background: white;
+}
+
+.messages-table tbody tr{
+
+  background: white;
+}
+
+
+
+
+.messages-container {
+  max-width: 1880px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+}
+.delete-confirm-modal {
+  .modal-body {
+    .confirm-delete-image {
+      max-width: 150px;
+      width: 100%;
+      height: auto;
+      margin-top: 10px;
+    }
+  }
+}
+
+.form-container {
+  padding: 20px;
+  direction: rtl;
+}
+
+.form-header h1 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form-content label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-input {
+
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4b9cd3;
+  background-color: #fff;
+}
+
+.form-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: rgba(81, 142, 48, 1);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+.invite-button {
+height: 10px;
+  width: 10px;
+  border: none;
+
+}
+.document-flow-table th {
+  background-color: rgba(23, 76, 114, 1);
+  color: white;
+  text-align: center;
+}
+
+.document-flow-table td {
+  text-align: center;
+}
+
+.form-button:hover {
+  background-color: rgb(68, 119, 41);
+}
+
+.cancel-button {
+  background-color: #dc3545;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.form-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.form-table th,
+.form-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+
+}
+
+.importance-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+.selected {
+  background-color: rgba(0, 123, 255, 0.1);
+  font-weight: bold;
+}
+
+.messages-table tr {
+  background-color:  rgba(0, 123, 255, 0.1);
+}
+
+
+
+.messages-table tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.importance-low {
+  background-color:rgba(46, 186, 33, 1);
+}
+
+.importance-medium {
+  background-color: rgba(247, 163, 92, 1);
+}
+
+.importance-high {
+  background-color: rgba(213, 47, 29, 1);
+}
+
+.messages-container h2 {
+  max-width: 100%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.messages-container select {
+  padding: 8px;
+  font-size: 16px;
+  width: 250px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  color: #333;
+  outline: none;
+}
+
+.messages-container .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: rgba(232, 232, 232, 1);
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.messages-container .header h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+.messages-container .form-group {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+
+}
+
+.messages-container .form-group label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  width: 100px;
+}
+
+.messages-container .form-group .required {
+  color: red;
+}
+
+.messages-container .form-group .input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 40%;
+
+}
+
+.messages-container .form-group .input:focus {
+  outline: none;
+  border-color: #4b9cd3;
+  background-color: #fff;
+}
+
+.messages-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.messages-table th,
+.messages-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+
+}
+
+.messages-table th {
+  background-color: rgba(23, 76, 114, 1);
+  color: white;
+
+}
+
+.messages-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.messages-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
+.btn img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.3s ease;
+}
+
+.btn span {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover img {
+  transform: scale(1.1);
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+  color: #ff0000;
+}
+
+
+
+.my-messages .input{
+  background: white;
+}
+.user-info{
+  margin-bottom: 20px;
+  margin-right: 20px;
+  select{
+    background: #ffffff;
+    border: 1px solid  #c3bfbf;
+
+  }}
+.dates .input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+  background-color: #ffffff;
+  width: 40%;
+}
+.my-messages .messages-container{
+background: white;
+}
+.datepicker-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+.datepicker-input.input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 18px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.datepicker-input.input:focus {
+  border-color: #4CAF50;
+  background-color: #ffffff;
+  outline: none;
+}
+
+.datepicker-input.input::placeholder {
+  color: #888;
+  font-size: 16px;
+}
+.datepicker-input.input::-webkit-outer-spin-button,
+.datepicker-input.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.datepicker-input.input:valid {
+  border-color: #4CAF50;
+  width: 300px;
+}
+.dates .input:focus {
+  border-color: #4CAF50;
+  background-color: #ffffff;
+  outline: none;
+}
+.dates .input::-webkit-input-placeholder {
+  color: #888;
+  font-size: 14px;
+}
+
+.dates .input:-ms-input-placeholder {
+  color: #888;
+  font-size: 14px;
+}
+
+.dates .input::placeholder {
+  color: #888;
+  font-size: 14px;
+}
+.dates span {
+  font-size: 18px;
+  color: #333;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+
+.dates input {
+  height: 40px;
+  line-height: 40px;
+
+}
+.messages-container .form-group .dates .input {
+  background: white;
+  border: 1px solid  #c3bfbf;
+}
+.messages-container .messages-table tr{
+  background: white;
+}
+.messages-container .messages-table tr.selected{
+  background:#ECECEC;
+}
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+}
+.error {
+  color: red;
+  font-size: 16px;
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .messages-container {
+    padding: 0;
+  }
+
+  .messages-container h2 {
+    font-size: 16px;
+  }
+
+  .messages-container .form-group {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+
+  }
+
+  .messages-container .form-group label {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .messages-container .form-group .input {
+    width: 39%;
+  }
+
+  .messages-table th,
+  .messages-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .btn {
+    width: auto;
+    padding: 3px;
+    font-size: 14px;
+  }
+
+  .messages-table {
+    font-size: 14px;
+  }
+
+  .messages-container .header {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .messages-container {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .content {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .messages-container h2 {
+    font-size: 14px;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .messages-container select {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .messages-container .header {
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .messages-container .form-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .messages-container .form-group label {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .messages-container .form-group .input {
+    width: 100%;
+    font-size: 12px;
+    min-width: 0;
+    padding: 8px;
+  }
+
+  .messages-table {
+    font-size: 12px;
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+
+  .messages-table th,
+  .messages-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 150px;
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn img {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .btn span {
+    margin-top: 5px;
+    font-size: 13px;
+  }
+
+  .loading,
+  .error {
+    text-align: center;
+    font-size: 14px;
+    color: #ff0000;
+    margin-top: 20px;
+  }
+
+  .react-datepicker {
+    left: 0 !important;
+    right: 0 !important;
+    margin: auto;
+  }
+
+  .react-datepicker__month-container {
+    width: 80%;
+    max-width: 320px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 375px) {
+  .messages-container {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .content {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .messages-container h2 {
+    font-size: 14px;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .messages-container select {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .messages-container .header {
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .messages-container .form-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .messages-container .form-group label {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .messages-container .form-group .input {
+    width: 100%;
+    font-size: 12px;
+    min-width: 0;
+    padding: 8px;
+  }
+
+  .messages-table {
+    font-size: 12px;
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+
+  .messages-table th,
+  .messages-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 150px;
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn img {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .btn span {
+    margin-top: 5px;
+    font-size: 13px;
+  }
+
+  .loading,
+  .error {
+    text-align: center;
+    font-size: 14px;
+    color: #ff0000;
+    margin-top: 20px;
+  }
+}

@@ -1,0 +1,239 @@
+.document-flow-list {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  direction: rtl;
+  font-family: 'Vazir', sans-serif;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+}
+
+.message-block {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+}
+
+.letter-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.letter-detail-card {
+  background: linear-gradient(135deg, #f0f4f8, #ffffff);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #2c3e50;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #e0e7f0, #ffffff);
+  }
+
+  strong {
+    color: #2980b9;
+  }
+}
+
+.receiver-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
+}
+
+.sender-section,
+.receiver-section-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+
+  @media (max-width: 768px) {
+    border: none;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+}
+
+.sender-section {
+  border-right: none;
+}
+
+.receiver-section-inner {
+  border-left: none;
+}
+
+.content-section {
+  flex: 2;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #444;
+  max-height: 300px;
+  overflow-y: auto;
+  @media (max-width: 768px) {
+    flex: 1;
+    margin-bottom: 10px;
+  }
+}
+
+.profile-placeholder img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-bottom: 10px;
+}
+
+.sender-name,
+.receiver-name {
+  font-weight: 600;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.timestamp {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.message-content1 {
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #444;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.branch-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.status-icon {
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.seen-icon {
+  color: #28a745; /* سبز برای دیده شده */
+  font-size: 16px;
+}
+
+.unseen-icon {
+  color: #dc3545; /* قرمز برای دیده نشده */
+  font-size: 16px;
+}
+
+.referred-icon {
+  color: #007bff; /* آبی برای ارجاع شده */
+  font-size: 14px;
+}
+
+
+
+
+
+
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content2 {
+  position: relative;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 8px;
+}
+
+.modal-close-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Vazir', sans-serif;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+
+
+
+
+
