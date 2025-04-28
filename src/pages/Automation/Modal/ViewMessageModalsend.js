@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import useUserRoles from "../../hooks/useUserRoles";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { handlePrint, handleDownloadPDF, handlePrintAndDownload } from './printUtils';
-import DocumentFlowModal from "./DocumentFlowModal";
+import DocumentFlowModal from "./DocumentFlowModalsend";
 
 const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
     const currentUserId = localStorage.getItem('userId');
@@ -37,7 +37,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
 
             axios.get(`https://automationapi.satia.co/api/letters/${messageId}?token=${token}`)
                 .then(response => {
-                    console.log("Response from API:", response.data);
                     setMessage(response.data);
                     setSignature(response.data.signature);
                     setContent(response.data.content);
@@ -130,7 +129,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
 
         try {
             const letterDetails = await getLetterDetails(selectedMessageId);
-            console.log("Letter details before update:", letterDetails);
 
             const formData = new FormData();
             formData.append('type', letterDetails.type || 'internal');
@@ -149,7 +147,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
             });
 
             for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
             }
 
             const response = await updateLetter(selectedMessageId, formData, {
@@ -158,7 +155,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            console.log("Response from server:", response);
 
             setSuccessMessage('فایل‌ها با موفقیت به نامه اضافه شدند!');
             setShowSuccessModal(true);

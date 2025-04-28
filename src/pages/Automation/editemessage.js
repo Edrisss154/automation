@@ -83,7 +83,6 @@
             const fetchLetterDetails = async () => {
                 try {
                     const data = await getLetterDetails(id);
-                    console.log("Data from API:", data);
                     if (data.cc_users && Array.isArray(data.cc_users)) {
                         setCarbonCopy(data.cc_users);
                     } else {
@@ -399,7 +398,6 @@
 
             try {
                 const response = await updateLetter(id, formData);
-                console.log("Response from server:", response.data);
                 setSuccessMessage("نامه با موفقیت ثبت  شد!");
                 setShowSuccessModal(true);
                 setTimeout(() => {
@@ -472,12 +470,10 @@
             }
 
             for (let [key, value] of formData.entries()) {
-                console.log(key, value);
             }
 
             try {
                 const response = await updateLetter(id, formData);
-                console.log("Response from server:", response.data);
                 setSuccessMessage("نامه با موفقیت ثبت و ارجاع شد!");
                 setShowSuccessModal(true);
                 setTimeout(() => {
@@ -511,7 +507,6 @@
         };
 
         const handleSendInvite = () => {
-            console.log('Sending invite to:', inviteName, inviteEmail, inviteMobile);
             setInviteName('');
             setInviteEmail('');
             setInviteMobile('');

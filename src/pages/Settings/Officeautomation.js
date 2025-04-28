@@ -20,14 +20,12 @@ const OasSettings = () => {
         const fetchOasSettings = async () => {
             try {
                 const data = await getOasSettings();
-                console.log("Fetched Settings:", data);
 
                 const settings = data.reduce((acc, setting) => {
                     acc[setting.key] = setting.value || '';
                     return acc;
                 }, {});
 
-                console.log("Processed Settings:", settings);
 
                 setFormData({
                     oas_numbering_format: settings.oas_numbering_format || '',
@@ -44,7 +42,6 @@ const OasSettings = () => {
     }, []);
 
     useEffect(() => {
-        console.log("Form Data Updated:", formData);
     }, [formData]);
 
     const handleChange = (e) => {
@@ -71,13 +68,10 @@ const OasSettings = () => {
                 }
             });
 
-            console.log('Sending FormData:');
             for (let [key, value] of formDataToSend.entries()) {
-                console.log(key, value);
             }
 
             const response = await saveOasSettings(formDataToSend);
-            console.log('Response:', response);
             alert('تنظیمات اتوماسیون اداری با موفقیت ذخیره شد!');
         } catch (error) {
             console.error('Error:', error);

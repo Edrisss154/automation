@@ -29,14 +29,14 @@ const EmailServerSettings = () => {
         const fetchEmailServerSettings = async () => {
             try {
                 const data = await getEmailServerSettings();
-                console.log("Fetched Settings:", data);
+                //console.log("Fetched Settings:", data);
 
                 const settings = data.reduce((acc, setting) => {
                     acc[setting.key] = setting.value || '';
                     return acc;
                 }, {});
 
-                console.log("Processed Settings:", settings);
+                //console.log("Processed Settings:", settings);
 
                 setFormData({
                     incoming_server: settings.incoming_server || '',
@@ -56,7 +56,7 @@ const EmailServerSettings = () => {
     }, []);
 
     useEffect(() => {
-        console.log("Form Data Updated:", formData);
+        //("Form Data Updated:", formData);
     }, [formData]);
 
     const handleChange = (e) => {
@@ -87,13 +87,13 @@ const EmailServerSettings = () => {
                 }
             });
 
-            console.log('Sending FormData:');
+            //console.log('Sending FormData:');
             for (let [key, value] of formDataToSend.entries()) {
-                console.log(key, value);
+                //console.log(key, value);
             }
 
             const response = await saveEmailServerSettings(formDataToSend);
-            console.log('Response:', response);
+            //console.log('Response:', response);
             alert('تنظیمات ایمیل سرور با موفقیت ذخیره شد!');
         } catch (error) {
             console.error('Error:', error);

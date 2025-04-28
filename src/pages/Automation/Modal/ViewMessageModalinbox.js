@@ -14,7 +14,7 @@ import { Collapse } from 'reactstrap';
 import useUserRoles from "../../hooks/useUserRoles";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import { handlePrint, handleDownloadPDF, handlePrintAndDownload } from './printUtils';
-import DocumentFlowModal from "./DocumentFlowModal";
+import DocumentFlowModal from "./DocumentFlowModalsend";
 
 const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) => {
     const [message, setMessage] = useState(null);
@@ -47,7 +47,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
 
             axios.get(`https://automationapi.satia.co/api/letters/${messageId}?token=${token}`)
                 .then(response => {
-                    console.log("Response from API:", response.data);
                     setMessage(response.data);
                     setSignature(response.data.signature);
                     setContent(response.data.content);
@@ -121,7 +120,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
                 selectedRole
             };
 
-            console.log("Adding new refer:", newRefer);
 
             setReferData([...referData, newRefer]);
             setIsAdded(true);
@@ -156,12 +154,10 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
         }
 
         for (let [key, value] of formData.entries()) {
-            console.log(key, value);
         }
 
         try {
             const response = await referLetter(selectedMessageId, formData);
-            console.log("Response from server:", response.data);
             setSuccessMessage("نامه با موفقیت ارجاع شد!");
             setShowSuccessModal(true);
             setTimeout(() => {
@@ -183,7 +179,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
 
         try {
             const letterDetails = await getLetterDetails(messageId);
-            console.log("Letter details:", letterDetails);
 
             if (!letterDetails.attachments) {
                 letterDetails.attachments = [];
@@ -194,7 +189,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
             });
 
             const response = await updateLetter(messageId, letterDetails);
-            console.log("Response from server:", response);
             alert("فایل‌ها با موفقیت پیوست شدند!");
             setShowAttachmentModal(false);
 

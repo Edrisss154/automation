@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ViewMessageModal from './Modal/ViewMessageModalcc';
 import useUserRoles from '../hooks/useUserRoles';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import ProfileModal from './Modal/ProfileModal';
 
 const CC = () => {
     const [letterType, setLetterType] = useState(null);
@@ -52,21 +53,19 @@ const CC = () => {
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedMessageData, setSelectedMessageData] = useState(null);
     const { userRoles, selectedRole, setSelectedRole, signatoryId } = useUserRoles();
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [profileImageUrl, setProfileImageUrl] = useState('');
 
-    // Function to set error with auto-dismiss and progress bar
     const showError = (message) => {
-        // Clear any existing timeout
         if (errorTimerRef.current) {
             clearInterval(errorTimerRef.current);
         }
         
-        // Set the error message
         setError(message);
         setErrorProgress(100);
         
-        // Set up the progress bar animation
         const startTime = Date.now();
-        const duration = 3000; // 3 seconds
+        const duration = 3000;
         
         errorTimerRef.current = setInterval(() => {
             const elapsedTime = Date.now() - startTime;
@@ -79,10 +78,9 @@ const CC = () => {
             } else {
                 setErrorProgress(remainingProgress);
             }
-        }, 10); // Update every 10ms for smooth animation
+        }, 10);
     };
 
-    // Clean up interval on component unmount
     useEffect(() => {
         return () => {
             if (errorTimerRef.current) {
@@ -100,7 +98,6 @@ const CC = () => {
                 start_date: startDate ? moment(startDate).format('YYYY-MM-DD') : null,
                 end_date: endDate ? moment(endDate).format('YYYY-MM-DD') : null
             };
-
             const response = await kartablsearchmymessage(page, 'cc', searchParams);
             setMessages(response.data);
             setLoading(false);
@@ -133,7 +130,6 @@ const CC = () => {
     const fetchLetters = async (page = 1) => {
         try {
             const response = await getLettersCC(page);
-            console.log("Letters:", response);
             setMessages(response.data);
             setFilteredMessages(response.data);
             setLoading(false);
@@ -153,15 +149,12 @@ const CC = () => {
             const matchesId = searchId ? (message.number && message.number.toString().includes(searchId)) : true;
             const matchesEditorValue = searchEditorValue ? (message.content && message.content.includes(searchEditorValue)) : true;
             const matchesFromUser = searchFromUser ? (message.signatory.first_name && message.signatory.first_name.includes(searchFromUser)) : true;
-
             return matchesId && matchesEditorValue && matchesFromUser;
         });
-
         setFilteredMessages(filtered);
     };
 
     const handleSendInvite = () => {
-        console.log('Sending invite to:', inviteName, inviteEmail, inviteMobile);
         setInviteName('');
         setInviteEmail('');
         setInviteMobile('');
@@ -174,19 +167,18 @@ const CC = () => {
             const selectedMessage = messages.find(message =>
                 message.id === selectedMessageId || message.type === selectedMessagetype
             );
-
             setSelectedMessageData(selectedMessage);
             setShowViewModal(true);
         } else {
             showError("هیچ پیامی انتخاب نشده است.");
         }
     };
+
     const documentflow = () => {
         if (selectedMessageId !== null) {
             const selectedMessage = messages.find(message =>
                 message.id === selectedMessageId || message.type === selectedMessagetype
             );
-
             setSelectedMessageData(selectedMessage);
             setShowDocumentFlowModal(true);
         } else {
@@ -205,6 +197,7 @@ const CC = () => {
             setCurrentPage(currentPage - 1);
         }
     };
+
     const handleFirstPage = () => {
         setCurrentPage(1);
     };
@@ -227,8 +220,7 @@ const CC = () => {
             if (selectedMessage) {
                 setLetterType(selectedMessage.type);
             } else {
-                console.error("پیام انتخاب شده وجود ندارد.");
-                setError("پیام انتخاب شده وجود ندارد.");
+                showError("پیام انتخاب شده وجود ندارد.");
             }
         }
     };
@@ -272,12 +264,14 @@ const CC = () => {
                     </div>
                 </div>
             ) : (
-                <div className="max-w-full mx-auto bg-gray-0  dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
+                <div className="max-w-full mx-auto bg-gray-0 dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                     {/* عنوان */}
-                    <div className="mb-6 bg-gray-100 dark:bg-gray-700 py-3 px-4 rounded-lg text-center">
-                        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">رونوشت</h2>
+                    
+                    <div className="w-full mt-8 flex justify-center items-center mb-6">
+                        <div className="bg-gray-200 dark:bg-gray-700 py-4 px-8 rounded-lg">
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">رونوشت</h2>
+                        </div>
                     </div>
-
                     {/* انتخاب نقش */}
                     <div className="flex flex-col sm:flex-row items-center justify-center mb-6 gap-3">
                         <div className="flex items-center gap-2">
@@ -369,16 +363,78 @@ const CC = () => {
                         </div>
                     </div>
 
-                    {/* جدول */}
-                    <div className="overflow-x-auto rounded-lg shadow-md">
+                    {/* نمایش به‌صورت کارت در موبایل */}
+                    <div className="block sm:hidden">
+                        {filteredMessages.map((message, index) => {
+                            let importanceClass = "";
+                            switch (message.importance) {
+                                case "normal": importanceClass = "bg-[#2EBA21]"; break;
+                                case "secret": importanceClass = "bg-[#F7A35C]"; break;
+                                case "classified": importanceClass = "bg-[#D52F1D]"; break;
+                                default: importanceClass = "";
+                            }
+
+                            return (
+                                <div
+                                    key={index}
+                                    onClick={() => handleRowClick(message.id)}
+                                    onDoubleClick={documentflow}
+                                    className={`p-4 mb-2 rounded-lg shadow-md  dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-pointer transition-colors duration-150
+                                        ${selectedMessageId === message.id ? 'bg-gray-100 dark:bg-gray-500 dark:text-gray-50' : 'bg-white dark:bg-gray-800'}`}
+                                >
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`inline-block w-3 h-3 rounded-full ${importanceClass}`} />
+                                            <span className="text-sm">شماره: {message.number}</span>
+                                        </div>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedMessageId(message.id);
+                                                setShowDocumentFlowModal(true);
+                                            }}
+                                            className="px-3 py-1 bg-[#174C72] text-white rounded hover:bg-[#123856] transition-colors duration-200 text-xs"
+                                        >
+                                            کامنت
+                                        </button>
+                                    </div>
+                                    <div className="text-sm mb-2 truncate">
+                                        موضوع: {message.subject}
+                                    </div>
+                                    <div className="text-sm mb-2">
+                                        تاریخ ثبت: {convertToJalali(message.registered_at)}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        ایجاد کننده:
+                                        <img
+                                            src={message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg'}
+                                            alt={message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                            className="w-6 h-6 rounded-full bg-gray-300 border-2 border-gray-300 dark:border-gray-600 cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setProfileImageUrl(message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg');
+                                                setShowProfileModal(true);
+                                            }}
+                                        />
+                                        <span>
+                                            {message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* نمایش به‌صورت جدول در دسکتاپ */}
+                    <div className="hidden sm:block overflow-x-auto rounded-lg shadow-md">
                         <table className="w-full border-collapse bg-white dark:bg-gray-800">
                             <thead>
                                 <tr className="bg-[#174C72] text-white text-xs sm:text-sm">
                                     <th className="p-2 sm:p-3 text-right">اهمیت</th>
+                                    <th className="p-2 sm:p-3 text-right hidden lg:table-cell">ایجاد کننده</th>
                                     <th className="p-2 sm:p-3 text-right">شماره</th>
                                     <th className="p-2 sm:p-3 text-right">موضوع</th>
                                     <th className="p-2 sm:p-3 text-right hidden sm:table-cell">تاریخ ثبت</th>
-                                    <th className="p-2 sm:p-3 text-right hidden lg:table-cell">ایجاد کننده</th>
                                     <th className="p-2 sm:p-3 text-right hidden md:table-cell">کامنت</th>
                                 </tr>
                             </thead>
@@ -398,10 +454,27 @@ const CC = () => {
                                             onClick={() => handleRowClick(message.id)}
                                             onDoubleClick={documentflow}
                                             className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer transition-colors duration-150 text-xs sm:text-sm
-                                                ${selectedMessageId === message.id ? 'bg-gray-100 dark:bg-gray-500  dark:text-gray-50' : 'bg-white dark:bg-gray-800'}`}
+                                                ${selectedMessageId === message.id ? 'bg-gray-100 dark:bg-gray-500 dark:text-gray-50' : 'bg-white dark:bg-gray-800'}`}
                                         >
                                             <td className="p-2 sm:p-3">
                                                 <span className={`inline-block w-2 h-2 sm:w-3 sm:h-3 rounded-full ${importanceClass}`} />
+                                            </td>
+                                            <td className="p-2 sm:p-3 hidden lg:table-cell">
+                                                <div className="flex items-center gap-2">
+                                                    <img
+                                                        src={message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg'}
+                                                        alt={message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                                        className="w-6 h-6 rounded-full bg-gray-300 border-2 border-gray-300 dark:border-gray-600 cursor-pointer"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setProfileImageUrl(message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg');
+                                                            setShowProfileModal(true);
+                                                        }}
+                                                    />
+                                                    <span>
+                                                        {message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="p-2 sm:p-3">{message.number}</td>
                                             <td className="p-2 sm:p-3 max-w-[120px] sm:max-w-[200px] truncate">
@@ -413,10 +486,6 @@ const CC = () => {
                                                 </OverlayTrigger>
                                             </td>
                                             <td className="p-2 sm:p-3 hidden sm:table-cell">{convertToJalali(message.registered_at)}</td>
-                                           
-                                            <td className="p-2 sm:p-3 hidden lg:table-cell">
-                                                {message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
-                                            </td>
                                             <td className="p-2 sm:p-3 hidden md:table-cell">
                                                 <button
                                                     onClick={(e) => {
@@ -438,7 +507,6 @@ const CC = () => {
 
                     {/* دکمه‌های عملیات */}
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-6">
-                       
                         <button
                             onClick={() => setShowDocumentFlowModal(true)}
                             className="flex flex-col items-center justify-center p-2 bg-white dark:bg-gray-700 rounded-lg shadow-lg hover:-translate-y-1 transition-transform duration-200 w-full sm:w-24"
@@ -502,27 +570,27 @@ const CC = () => {
                         inviteMobile={inviteMobile}
                         setInviteMobile={setInviteMobile}
                     />
-
                     <SuccessModal
                         isOpen={showSuccessModal}
                         toggle={() => setShowSuccessModal(false)}
                         message={successMessage}
-
                     />
-
                     <DocumentFlowModal
                         isOpen={showDocumentFlowModal}
                         toggle={() => setShowDocumentFlowModal(false)}
                         documentId={selectedMessageId}
                     />
-
                     <ViewMessageModal
                         isOpen={showViewModal}
                         toggle={() => setShowViewModal(false)}
                         messageId={selectedMessageId}
                         userRoles={userRoles}
                         selectedRole={selectedRole}
-
+                    />
+                    <ProfileModal
+                        isOpen={showProfileModal}
+                        toggle={() => setShowProfileModal(false)}
+                        imageUrl={profileImageUrl}
                     />
                 </div>
             )}

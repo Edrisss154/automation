@@ -26,7 +26,6 @@ const HeaderSettings = () => {
         setLoading(true);
         try {
             const response = await getLetterTemplates(page);
-            console.log("Fetched Headers:", response);
 
             if (response && response.data && Array.isArray(response.data)) {
                 setHeaders(response.data);

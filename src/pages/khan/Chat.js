@@ -1,52 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getDataSources, askQuestion } from './api';
+import { motion, AnimatePresence } from 'framer-motion';
+import { askQuestion } from './api';
+
+const modalVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  exit: { opacity: 0, y: 50, transition: { duration: 0.3 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+};
 
 const Chat = ({ onClose, chatHistory, setChatHistory }) => {
-  const [activeTab, setActiveTab] = useState('chat');
-  const [sources, setSources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [question, setQuestion] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
-  const [expandedSourceId, setExpandedSourceId] = useState(null);
-  const [expandedTexts, setExpandedTexts] = useState({});
+  const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedMode = typeof window !== 'undefined' ? localStorage.getItem('darkMode') : null;
+    return savedMode ? JSON.parse(savedMode) : true;
+  });
   const chatEndRef = useRef(null);
-
-  useEffect(() => {
-    if (activeTab === 'data-sources') {
-      fetchDataSources();
-    }
-  }, [activeTab]);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
-  const fetchDataSources = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getDataSources();
-      if (Array.isArray(data)) {
-        setSources(data);
-      } else if (data && Array.isArray(data.results)) {
-        setSources(data.results);
-      } else if (data && Array.isArray(data.data)) {
-        setSources(data.data);
-      } else if (data && Array.isArray(data.sources)) {
-        setSources(data.sources);
-      } else {
-        console.error('Unexpected data format:', data);
-        setSources([]);
-        setError('ساختار داده‌های دریافتی نامعتبر است');
-      }
-    } catch (err) {
-      console.error('Error in fetchDataSources HAMID:', err);
-      setError(err.message || 'خطا در دریافت منابع داده');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
-  };
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,25 +72,33 @@ const Chat = ({ onClose, chatHistory, setChatHistory }) => {
     }
   };
 
-  const toggleChunks = (sourceId) => {
-    setExpandedSourceId(expandedSourceId === sourceId ? null : sourceId);
+  const handleKeyPress = (e) => {
+    if (e.keyCode === 13) {
+      handleSubmit(e);
+    }
   };
 
-  const toggleTextExpansion = (chunkId) => {
-    setExpandedTexts((prev) => ({
-      ...prev,
-      [chunkId]: !prev[chunkId],
-    }));
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          type: 'question',
+          text: `فایل: ${file.name}`,
+          timestamp: new Date(),
+        },
+      ]);
+    }
   };
 
-  const translateRefreshStatus = (status) => {
-    const translations = {
-      Never: 'هرگز',
-      Daily: 'روزانه',
-      Weekly: 'هفتگی',
-      Monthly: 'ماهانه',
-    };
-    return translations[status] || status || 'هرگز';
+  const handleAttachClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
   };
 
   const formatTimestamp = (timestamp) => {
@@ -109,472 +108,274 @@ const Chat = ({ onClose, chatHistory, setChatHistory }) => {
     });
   };
 
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const shouldShowDate = (currentItem, prevItem) => {
+    if (!prevItem) return true;
+    const currentDate = new Date(currentItem.timestamp).toDateString();
+    const prevDate = new Date(prevItem.timestamp).toDateString();
+    return currentDate !== prevDate;
+  };
+
   return (
-    <div className="flex flex-col h-full dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-      {/* Header */}
-      <div className="flex justify-between items-center p-4 bg-blue-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 rounded-t-xl">
-        <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
-          چت با خان
-        </h2>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-          aria-label="بستن چت"
+      <AnimatePresence>
+        <motion.div
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className={`fixed inset-0 w-full h-full ${
+                isDarkMode ? 'bg-[#020618] border-gray-700' : 'bg-[#E7F3EF] border-gray-200'
+            } border rounded-none shadow-lg overflow-hidden flex flex-col z-50`}
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          {/* هدر */}
+          <div
+              className={`flex items-center p-3 sm:p-4 ${
+                  isDarkMode ? 'bg-[#27272a] text-white' : 'bg-[#FFF] text-black'
+              }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        {['chat', 'data-sources', 'add-data'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === tab
-                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 dark:bg-gray-900'
-                : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400'
-            }`}
-          >
-            {tab === 'chat'
-              ? 'چت'
-              : tab === 'data-sources'
-              ? 'منابع داده'
-              : 'داده جدید'}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
-        {activeTab === 'chat' && (
-          <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-              {chatHistory.length === 0 ? (
-                <div className="text-center text-gray-500 dark:text-gray-600 p-6">
-                  سوال خود را بپرسید تا گفتگو شروع شود
-                </div>
+            <button
+                onClick={onClose}
+                className="hover:text-gray-200 transition-colors mr-2"
+            >
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <h2 className="text-base sm:text-lg font-semibold">چت با خان</h2>
+            <button
+                onClick={toggleTheme}
+                className="ml-auto p-2 text-black hover:text-gray-200 transition-colors"
+            >
+              {isDarkMode ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
               ) : (
-                chatHistory.map((item, index) => (
-                  <div key={index} className="transition-all duration-200">
-                    {item.type === 'question' ? (
-                      <div className="bg-blue-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm text-right">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatTimestamp(item.timestamp)}
-                          </span>
-                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
-                            شما
-                          </span>
-                        </div>
-                        <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                          {item.text}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl shadow-sm">
-                        <div className="flex justify-between items-center mb-3">
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatTimestamp(item.timestamp)}
-                          </span>
-                          <span className="text-xs font-semibold text-green-600 dark:text-green-400">
-                            خان
-                          </span>
-                        </div>
-                        <div className="mb-4">
-                          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                            {item.answer}
-                          </p>
-                        </div>
-                        {item.sources && item.sources.length > 0 && (
-                          <div>
-                            <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-2">
-                              منابع:
-                            </h3>
-                            <ul className="list-disc pr-5 space-y-2">
-                              {item.sources.map((source, sourceIndex) => (
-                                <li key={sourceIndex} className="text-sm">
-                                  <p className="text-gray-700 dark:text-gray-300">
-                                    {source.text}
-                                  </p>
-                                  <a
-                                    href={source.metadata.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                                  >
-                                    منبع: {source.metadata.source}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+              )}
+            </button>
+          </div>
+
+          {/* بخش چت */}
+          <div
+              className={`flex flex-col h-full ${
+                  isDarkMode ? 'bg-[#020618]' : 'bg-[#E7F3EF]'
+              }`}
+              style={
+                chatHistory.length === 0
+                    ? {
+                      backgroundImage: 'url(/Untitled1.png)',
+                      backgroundSize: '256px 130px',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                    }
+                    : {}
+              }
+          >
+            <div className="flex-1 overflow-y-auto space-y-2 p-3 sm:p-4 md:p-5">
+              {chatHistory.length === 0 ? (
+                  <div className={`text-center p-4 sm:p-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    سوال خود را بپرسید تا گفتگو شروع شود
                   </div>
-                ))
+              ) : (
+                  chatHistory.map((item, index) => (
+                      <div key={index}>
+                        {shouldShowDate(item, chatHistory[index - 1]) && (
+                            <div
+                                className={`text-center text-xs my-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                            >
+                      <span className={`px-3 py-1 rounded-full ${isDarkMode ? 'bg-[#37474F]' : 'bg-[#DDE8E4]'}`}>
+                        {formatDate(item.timestamp)}
+                      </span>
+                            </div>
+                        )}
+                        <motion.div
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            className="transition-all duration-200"
+                        >
+                          {item.type === 'question' ? (
+                              <div className="flex justify-start">
+                                <div
+                                    className={`max-w-[80%] sm:max-w-[70%] p-2 sm:p-3 rounded-md shadow-sm ${
+                                        isDarkMode ? 'bg-[#024a70]' : 'bg-[#DCF8C6]'
+                                    }`}
+                                >
+                                  <p className={`leading-relaxed text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                                    {item.text}
+                                  </p>
+                                  <span
+                                      className={`text-xs block text-left mt-1 ${
+                                          isDarkMode ? 'text-white/70' : 'text-gray-600'
+                                      }`}
+                                  >
+                            {formatTimestamp(item.timestamp)}
+                          </span>
+                                </div>
+                              </div>
+                          ) : (
+                              <div className="flex justify-end">
+                                <div
+                                    className={`max-w-[80%] sm:max-w-[70%] p-2 sm:p-3 rounded-md shadow-sm ${
+                                        isDarkMode ? 'bg-[#E0E0E0]' : 'bg-[#FFFFFF]'
+                                    }`}
+                                >
+                                  <div className="flex justify-between items-center mb-1">
+                            <span
+                                className={`text-xs font-semibold ${
+                                    isDarkMode ? 'text-[#37474F]' : 'text-[#4DA8DA]'
+                                }`}
+                            >
+                              خان
+                            </span>
+                                    <span className="text-xs text-gray-600">
+                              {formatTimestamp(item.timestamp)}
+                            </span>
+                                  </div>
+                                  <p className="text-gray-800 leading-relaxed text-sm sm:text-base">{item.answer}</p>
+                                  {item.sources && item.sources.length > 0 && (
+                                      <div className="mt-2">
+                                        <h3 className="text-xs font-semibold text-gray-600 mb-1">منابع:</h3>
+                                        <ul className="list-disc pl-4 space-y-1">
+                                          {item.sources.map((source, sourceIndex) => (
+                                              <li key={sourceIndex} className="text-xs">
+                                                <p className="text-gray-600">{source.text}</p>
+                                                <a
+                                                    href={source.metadata.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-500 hover:underline"
+                                                >
+                                                  منبع: {source.metadata.source}
+                                                </a>
+                                              </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                  )}
+                                </div>
+                              </div>
+                          )}
+                        </motion.div>
+                      </div>
+                  ))
               )}
               {chatLoading && (
-                <div className="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mb-4">
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-blue-600 dark:border-blue-400 mr-3"></div>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    در حال دریافت پاسخ...
-                  </p>
-                </div>
+                  <div className="flex justify-end">
+                    <div
+                        className={`p-2 sm:p-3 rounded-md shadow-sm ${isDarkMode ? 'bg-[#27272a]' : 'bg-[#FFFFFF]'}`}
+                    >
+                      <div className="flex items-center">
+                        <div className="animate-pulse flex space-x-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        </div>
+                        <p className={`ml-2 text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
+                          در حال تایپ...
+                        </p>
+                      </div>
+                    </div>
+                  </div>
               )}
               <div ref={chatEndRef} />
             </div>
-            <form onSubmit={handleSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="سوال خود را بپرسید..."
-                className="flex-1 p-3 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-                disabled={chatLoading}
-              />
-              <button
-                type="submit"
-                disabled={chatLoading || !question.trim()}
-                className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 flex items-center transition-colors"
-              >
-                {chatLoading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white mr-2"></div>
-                    <span>در حال ارسال...</span>
-                  </>
-                ) : (
-                  'ارسال'
-                )}
-              </button>
 
-            </form>
-            {error && (
-              <div className="text-red-600 dark:text-red-400 mt-2 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
-                {error}
-              </div>
+            {/* فرم ورودی */}
+            <div
+                className={`w-4/5 mx-auto flex items-center p-2 sm:p-3 border-t ${
+                    isDarkMode ? 'border-gray-700' : 'border-gray-200'
+                }`}
+            >
+              <button
+                  type="submit"
+                  disabled={chatLoading || !question.trim()}
+                  onClick={handleSubmit}
+                  className="p-2 text-[#4DA8DA] disabled:opacity-50"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+              </button>
+              <button
+                  onClick={handleAttachClick}
+                  className={`p-2 ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.586-6.586a4 4 0 00-5.656-5.656l-6.586 6.586a6 6 0 008.485 8.485l6.586-6.586a2 2 0 00-2.828-2.828z"
+                  />
+                </svg>
+              </button>
+              <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+              />
+              <input
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="پیام..."
+                  className={`w-11/12 flex-1 p-2 sm:p-3 rounded-full focus:outline-none text-sm sm:text-base ${
+                      isDarkMode
+                          ? 'bg-[#27272a] text-white placeholder-gray-400'
+                          : 'bg-[#FFFFFF] text-gray-800 placeholder-gray-400 border border-gray-300 focus:border-[#4DA8DA]'
+                  }`}
+                  disabled={chatLoading}
+              />
+            </div>
+
+            {selectedFile && (
+                <div
+                    className={`text-sm p-2 mx-3 mb-2 rounded-lg ${
+                        isDarkMode ? 'text-gray-300 bg-[#37474F]' : 'text-gray-600 bg-[#F5F5F5]'
+                    }`}
+                >
+                  فایل انتخاب‌شده: {selectedFile.name}
+                  <button
+                      onClick={() => setSelectedFile(null)}
+                      className={`ml-2 ${isDarkMode ? 'text-red-400 hover:text-red-600' : 'text-red-500 hover:text-red-700'}`}
+                  >
+                    حذف
+                  </button>
+                </div>
             )}
-          </div>
-        )}
-        {activeTab === 'data-sources' && (
-          <div className="space-y-4">
-            {loading ? (
-              <div className="flex justify-center p-6">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-600 dark:border-blue-400"></div>
-              </div>
-            ) : error ? (
-              <div className="text-center p-6 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                <div className="text-red-600 dark:text-red-400 mb-3 font-medium">
+
+            {error && (
+                <div
+                    className={`text-sm p-2 rounded-lg mx-3 mb-3 ${
+                        isDarkMode ? 'text-red-400 bg-red-900/20' : 'text-red-500 bg-red-100'
+                    }`}
+                >
                   {error}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  لطفاً موارد زیر را بررسی کنید:
-                  <ul className="list-disc list-inside mt-2 text-right">
-                    <li>اتصال به اینترنت</li>
-                    <li>وضعیت سرور</li>
-                    <li>آدرس API در فایل .env</li>
-                  </ul>
-                </div>
-                <button
-                  onClick={fetchDataSources}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  تلاش مجدد
-                </button>
-              </div>
-            ) : sources && Array.isArray(sources) && sources.length > 0 ? (
-              <div className="grid gap-4">
-                {sources.map((source, index) => (
-                  <div
-                    key={source.id || index}
-                    className="p-4 dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md cursor-pointer transition-all border border-gray-200 dark:border-gray-700"
-                    onClick={() => toggleChunks(source.id || index)}
-                  >
-                    <div className="flex flex-col">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {source.url}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          وارد شده توسط: {source.imported_by || 'نامشخص'}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          تاریخ وارد کردن:{' '}
-                          {source.import_date
-                            ? new Date(source.import_date).toLocaleString('fa-IR')
-                            : 'نامشخص'}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          دوره بروزرسانی:{' '}
-                          {translateRefreshStatus(source.refresh_status)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-2 flex items-center justify-between">
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        تعداد قطعات متن: {source.chunks ? source.chunks.length : 0}
-                      </p>
-                      <span className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
-                        {expandedSourceId === (source.id || index)
-                          ? 'بستن'
-                          : 'مشاهده جزئیات'}
-                      </span>
-                    </div>
-                    {expandedSourceId === (source.id || index) &&
-                      source.chunks &&
-                      source.chunks.length > 0 && (
-                        <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-3">
-                          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            قطعات متن:
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
-                            {source.chunks.map((chunk, chunkIndex) => {
-                              const chunkKey =
-                                chunk.id || `chunk-${source.id || index}-${chunkIndex}`;
-                              const isTextExpanded = expandedTexts[chunkKey];
-                              return (
-                                <div
-                                  key={chunkKey}
-                                  className="p-3 mb-3 text-xs dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700"
-                                >
-                                  <div className="flex justify-between mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-                                    <p className="font-semibold text-gray-700 dark:text-gray-300">
-                                      شناسه: {chunk.id || `بخش ${chunkIndex + 1}`}
-                                    </p>
-                                    <p className="text-gray-500 dark:text-gray-400 text-xs">
-                                      صفحه: {chunk.metadata?.page || 'نامشخص'}
-                                    </p>
-                                  </div>
-                                  {chunk.title && (
-                                    <div className="mb-2">
-                                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                        عنوان:
-                                      </p>
-                                      <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                        {chunk.title}
-                                      </p>
-                                    </div>
-                                  )}
-                                  {chunk.text && (
-                                    <div className="mb-2">
-                                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                        متن:
-                                      </p>
-                                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                        {chunk.text.length > 200 && !isTextExpanded
-                                          ? `${chunk.text.substring(0, 200)}...`
-                                          : chunk.text}
-                                      </p>
-                                      {chunk.text.length > 200 && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleTextExpansion(chunkKey);
-                                          }}
-                                          className="mt-2 text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                                        >
-                                          {isTextExpanded ? 'نمایش کمتر' : 'نمایش بیشتر'}
-                                        </button>
-                                      )}
-                                    </div>
-                                  )}
-                                  {chunk.content && !chunk.text && (
-                                    <div className="mb-2">
-                                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                        محتوا:
-                                      </p>
-                                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                        {chunk.content.length > 200 && !isTextExpanded
-                                          ? `${chunk.content.substring(0, 200)}...`
-                                          : chunk.content}
-                                      </p>
-                                      {chunk.content.length > 200 && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleTextExpansion(chunkKey);
-                                          }}
-                                          className="mt-2 text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                                        >
-                                          {isTextExpanded ? 'نمایش کمتر' : 'نمایش بیشتر'}
-                                        </button>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 dark:text-gray-400 p-6">
-                هیچ منبع داده‌ای یافت نشد
-              </div>
             )}
           </div>
-        )}
-        {activeTab === 'add-data' && (
-          <div className="max-w-2xl mx-auto p-4">
-            <h2 className="text-xl font-bold mb-4 text-blue-600 dark:text-blue-400">
-              افزودن منبع داده جدید
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="url"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1"
-                >
-                  آدرس وب‌سایت
-                </label>
-                <input
-                  type="url"
-                  id="url"
-                  className="w-full px-3 py-2 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com"
-                />
-              </div>
-              <div>
-                <button
-                  onClick={async () => {
-                    const urlInput = document.getElementById('url');
-                    const url = urlInput.value;
-                    if (!url) {
-                      alert('لطفا آدرس وب‌سایت را وارد کنید');
-                      return;
-                    }
-                    try {
-                      new URL(url);
-                    } catch (e) {
-                      alert('لطفا یک آدرس معتبر وارد کنید');
-                      return;
-                    }
-                    try {
-                      const response = await fetch('http://127.0.0.1:8000/crawl_url', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url }),
-                      });
-                      if (!response.ok) {
-                        throw new Error('خطا در ارسال درخواست');
-                      }
-                      const data = await response.json();
-                      if (data.status === 'success') {
-                        const container = document.createElement('div');
-                        container.className = 'mt-4 space-y-4';
-                        data.chunks.forEach((chunk, index) => {
-                          const chunkDiv = document.createElement('div');
-                          chunkDiv.className =
-                            'space-y-2 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm relative border border-gray-200 dark:border-gray-700';
-                          chunkDiv.id = `chunk-${index}`;
-                          const titleInput = document.createElement('input');
-                          titleInput.type = 'text';
-                          titleInput.value = chunk.title;
-                          titleInput.className =
-                            'w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent';
-                          const textArea = document.createElement('textarea');
-                          textArea.value = chunk.text;
-                          textArea.rows = 4;
-                          textArea.className =
-                            'w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent';
-                          const removeButton = document.createElement('button');
-                          removeButton.innerHTML = '×';
-                          removeButton.className =
-                            'absolute top-2 right-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xl font-bold focus:outline-none';
-                          removeButton.onclick = () => {
-                            if (window.confirm('آیا از حذف این قطعه متن مطمئن هستید؟')) {
-                              chunkDiv.remove();
-                            }
-                          };
-                          chunkDiv.appendChild(removeButton);
-                          chunkDiv.appendChild(titleInput);
-                          chunkDiv.appendChild(textArea);
-                          container.appendChild(chunkDiv);
-                        });
-                        const existingContainer = document.querySelector('.chunks-container');
-                        if (existingContainer) {
-                          existingContainer.remove();
-                        }
-                        const submitButton = document.createElement('button');
-                        submitButton.innerHTML = 'ذخیره در پایگاه دانش';
-                        submitButton.className =
-                          'w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors';
-                        let isLoading = false;
-                        submitButton.onclick = async () => {
-                          if (isLoading) return;
-                          isLoading = true;
-                          submitButton.innerHTML = 'در حال ذخیره سازی...';
-                          submitButton.disabled = true;
-                          const chunks = Array.from(
-                            document.querySelectorAll('.chunks-container > div')
-                          ).map((div) => ({
-                            title: div.querySelector('input').value,
-                            text: div.querySelector('textarea').value,
-                            section: '',
-                          }));
-                          try {
-                            const response = await fetch(
-                              'http://127.0.0.1:8000/store_knowledge',
-                              {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  source_url: url,
-                                  chunks: chunks,
-                                }),
-                              }
-                            );
-                            if (response.ok) {
-                              alert('اطلاعات با موفقیت ذخیره شد');
-                              setActiveTab('data-sources');
-                            } else {
-                              throw new Error('خطا در ذخیره اطلاعات');
-                            }
-                          } catch (error) {
-                            alert('خطا در ارسال درخواست: ' + error.message);
-                          } finally {
-                            isLoading = false;
-                            submitButton.innerHTML = 'ذخیره در پایگاه دانش';
-                            submitButton.disabled = false;
-                          }
-                        };
-                        container.appendChild(submitButton);
-                        container.classList.add('chunks-container');
-                        urlInput.parentElement.parentElement.appendChild(container);
-                      } else {
-                        throw new Error('خطا در دریافت اطلاعات');
-                      }
-                    } catch (error) {
-                      alert('خطا در ارسال درخواست: ' + error.message);
-                    }
-                  }}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                >
-                  شروع خزش
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+        </motion.div>
+      </AnimatePresence>
   );
 };
 

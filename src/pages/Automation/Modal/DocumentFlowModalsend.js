@@ -356,7 +356,7 @@ const DocumentFlowModal = ({ isOpen, toggle, documentId }) => {
                 toggle={toggle}
                 className="modal-xl modal-fullscreen-lg-down"
                 size="xl"
-                style={{ maxWidth: '95%', width: '95%', margin: '0 auto' }}
+                style={{ maxWidth: '100%', width: '95%', margin: '0 auto' }}
             >
                 <ModalHeader className="bg-[#174C72] border-b border-gray-200 text-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
                 <button

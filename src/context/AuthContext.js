@@ -22,8 +22,7 @@ export const AuthProvider = ({ children }) => {
 
     const loginToCRM = async () => {
         try {
-            console.log('CRM Username:', process.env.REACT_APP_CRM_USERNAME);
-            console.log('CRM Password:', process.env.REACT_APP_CRM_PASSWORD);
+          
             const formData = new FormData();
             formData.append('username', process.env.REACT_APP_CRM_USERNAME);
             formData.append('password', process.env.REACT_APP_CRM_PASSWORD);

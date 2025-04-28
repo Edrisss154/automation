@@ -21,7 +21,8 @@ import '../../styles/Automation/my-message.scss';
 import { useNavigate } from 'react-router-dom';
 import ViewMessageModal from './Modal/ViewMessageModal';
 import useUserRoles from '../hooks/useUserRoles';
-import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import ProfileModal from './Modal/ProfileModal';
 
 const Mymessage = () => {
     const [successMessage, setSuccessMessage] = useState('');
@@ -64,21 +65,19 @@ const Mymessage = () => {
     const [selectedMessageData, setSelectedMessageData] = useState(null);
     const { userRoles, selectedRole, setSelectedRole, signatoryId } = useUserRoles();
     const currentUserId = 1; // Replace 1 with the actual user ID or logic to get the current user ID
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [profileImageUrl, setProfileImageUrl] = useState('');
 
-    // Function to set error with auto-dismiss and progress bar
     const showError = (message) => {
-        // Clear any existing timeout
         if (errorTimerRef.current) {
             clearInterval(errorTimerRef.current);
         }
         
-        // Set the error message
         setError(message);
         setErrorProgress(100);
         
-        // Set up the progress bar animation
         const startTime = Date.now();
-        const duration = 3000; // 3 seconds
+        const duration = 3000;
         
         errorTimerRef.current = setInterval(() => {
             const elapsedTime = Date.now() - startTime;
@@ -91,10 +90,9 @@ const Mymessage = () => {
             } else {
                 setErrorProgress(remainingProgress);
             }
-        }, 10); // Update every 10ms for smooth animation
+        }, 10);
     };
 
-    // Clean up interval on component unmount
     useEffect(() => {
         return () => {
             if (errorTimerRef.current) {
@@ -112,8 +110,7 @@ const Mymessage = () => {
                 start_date: startDate ? moment(startDate).format('YYYY-MM-DD') : null,
                 end_date: endDate ? moment(endDate).format('YYYY-MM-DD') : null
             };
-
-            const response = await kartablsearchmymessage(page, 'none',searchParams);
+            const response = await kartablsearchmymessage(page, 'none', searchParams);
             setMessages(response.data);
             setLoading(false);
             setTotalPages(response.total_pages);
@@ -145,7 +142,6 @@ const Mymessage = () => {
     const fetchLetters = async (page = 1) => {
         try {
             const response = await getLetters(page);
-            console.log("Letters:", response);
             setMessages(response.data);
             setFilteredMessages(response.data);
             setLoading(false);
@@ -165,15 +161,10 @@ const Mymessage = () => {
             const matchesId = searchId ? (message.number && message.number.toString().includes(searchId)) : true;
             const matchesEditorValue = searchEditorValue ? (message.content && message.content.includes(searchEditorValue)) : true;
             const matchesFromUser = searchFromUser ? (message.signatory.first_name && message.signatory.first_name.includes(searchFromUser)) : true;
-
-
-            return matchesId && matchesEditorValue && matchesFromUser ;
+            return matchesId && matchesEditorValue && matchesFromUser;
         });
-
         setFilteredMessages(filtered);
     };
-
-
 
     const handleReferClick = () => {
         if (selectedMessageId !== null) {
@@ -181,15 +172,16 @@ const Mymessage = () => {
             if (selectedMessage) {
                 setLetterType(selectedMessage.type);
             } else {
-                console.error("پیام انتخاب شده وجود ندارد.");
-                setError("پیام انتخاب شده وجود ندارد.");
+                showError("پیام انتخاب شده وجود ندارد.");
             }
         }
     };
+
     const handleRowClick = (messageId) => {
         setSelectedMessageId(messageId);
         handleReferClick();
     };
+
     const handleAddRefer = () => {
         if (receiver && direction) {
             const newRefer = {
@@ -199,12 +191,8 @@ const Mymessage = () => {
                 privateNote,
                 selectedRole
             };
-
-            console.log("Adding new refer:", newRefer);
-
             setReferData([...referData, newRefer]);
             setIsAdded(true);
-
             setReceiver('');
             setDirection('');
             setMargin('');
@@ -215,7 +203,6 @@ const Mymessage = () => {
     };
 
     const handleSendInvite = () => {
-        console.log('Sending invite to:', inviteName, inviteEmail, inviteMobile);
         setInviteName('');
         setInviteEmail('');
         setInviteMobile('');
@@ -230,12 +217,12 @@ const Mymessage = () => {
             showError("هیچ پیامی انتخاب نشده است.");
         }
     };
+
     const handleDelete = async () => {
         if (selectedMessageId === null) {
             showError("هیچ پیامی انتخاب نشده است.");
             return;
         }
-
         try {
             const response = await deleteLetter(selectedMessageId);
             if (response) {
@@ -260,6 +247,7 @@ const Mymessage = () => {
             showError("هیچ پیامی انتخاب نشده است.");
         }
     };
+
     const documentflow = () => {
         if (selectedMessageId !== null) {
             const selectedMessage = messages.find(message => message.id === selectedMessageId);
@@ -269,6 +257,7 @@ const Mymessage = () => {
             showError("هیچ پیامی انتخاب نشده است.");
         }
     };
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -280,6 +269,7 @@ const Mymessage = () => {
             setCurrentPage(currentPage - 1);
         }
     };
+
     const handleFirstPage = () => {
         setCurrentPage(1);
     };
@@ -287,9 +277,11 @@ const Mymessage = () => {
     const handleLastPage = () => {
         setCurrentPage(totalPages);
     };
+
     useEffect(() => {
         fetchLetters(currentPage);
     }, [currentPage]);
+
     const convertToJalali = (gregorianDate) => {
         return moment(gregorianDate).format('jYYYY/jMM/jDD');
     };
@@ -299,11 +291,8 @@ const Mymessage = () => {
             NotificationManager.warning('هیچ پیامی انتخاب نشده است.', 'هشدار');
             return;
         }
-
         try {
             const letterDetails = await getLetterDetails(selectedMessageId);
-            console.log("Letter details:", letterDetails);
-
             if (!letterDetails.receivers_user_id) {
                 letterDetails.receivers_user_id = [];
             }
@@ -316,7 +305,6 @@ const Mymessage = () => {
             if (!letterDetails.receivers_private_message) {
                 letterDetails.receivers_private_message = [];
             }
-
             if (referData.length > 0) {
                 referData.forEach(data => {
                     letterDetails.receivers_user_id.push(data.receiver);
@@ -326,22 +314,19 @@ const Mymessage = () => {
                 });
             }
             const response = await updateLetterreferer(selectedMessageId, letterDetails);
-            console.log("Response from server:", response);
             setSuccessMessage("نامه با موفقیت ثبت شد!");
             setShowSuccessModal(true);
             setTimeout(() => {
                 setShowSuccessModal(true);
                 navigate('/automation');
             }, 1000);
-
             setShowReferModal(false);
-
         } catch (err) {
-            console.error("Error from server:", err.response?.data || err.message);
             showError("مشکلی در ارسال داده‌ها وجود دارد");
             alert("خطا در ارجاع نامه. لطفاً دوباره تلاش کنید.");
         }
     };
+
     const handleRoleChange = (event) => {
         setSelectedRole(event.target.value);
     };
@@ -380,12 +365,14 @@ const Mymessage = () => {
                     </div>
                 </div>
             ) : (
-                <div className="max-w-full mx-auto bg-gray-50  dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
+                <div className="max-w-full mx-auto bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                     {/* عنوان */}
-                    <div className="mb-6 bg-gray-100 dark:bg-gray-700 py-3 px-4 rounded-lg text-center">
-                        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">نامه های من</h2>
+                   
+                    <div className="w-full mt-8 flex justify-center items-center mb-6">
+                        <div className="bg-gray-200 dark:bg-gray-700 py-4 px-8 rounded-lg">
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">نامه های من</h2>
+                        </div>
                     </div>
-
                     {/* انتخاب نقش */}
                     <div className="flex flex-col sm:flex-row items-center justify-center mb-6 gap-3">
                         <div className="flex items-center gap-2">
@@ -477,17 +464,68 @@ const Mymessage = () => {
                         </div>
                     </div>
 
-                    {/* جدول */}
-                    <div className="overflow-x-auto rounded-lg shadow-md">
+                    {/* نمایش به‌صورت کارت در موبایل */}
+                    <div className="block sm:hidden">
+                        {filteredMessages.map((message, index) => {
+                            let importanceClass = "";
+                            switch (message.importance) {
+                                case "normal": importanceClass = "bg-[#2EBA21]"; break;
+                                case "secret": importanceClass = "bg-[#F7A35C]"; break;
+                                case "classified": importanceClass = "bg-[#D52F1D]"; break;
+                                default: importanceClass = "";
+                            }
+
+                            return (
+                                <div
+                                    key={index}
+                                    onClick={() => handleRowClick(message.id)}
+                                    onDoubleClick={handleView}
+                                    className={`p-4 mb-2 rounded-lg shadow-md dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-pointer transition-colors duration-150
+                                        ${selectedMessageId === message.id ? 'bg-gray-100 dark:bg-gray-500 dark:text-gray-50' : 'bg-white dark:bg-gray-800'}`}
+                                >
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`inline-block w-3 h-3 rounded-full ${importanceClass}`} />
+                                            <span className="text-sm">شماره: {message.number}</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-sm mb-2 truncate">
+                                        موضوع: {message.subject}
+                                    </div>
+                                    <div className="text-sm mb-2">
+                                        تاریخ ثبت: {convertToJalali(message.registered_at)}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        ایجاد کننده:
+                                        <img
+                                            src={message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg'}
+                                            alt={message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                            className="w-6 h-6 rounded-full bg-gray-300 border-2 border-gray-300 dark:border-gray-600 cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setProfileImageUrl(message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg');
+                                                setShowProfileModal(true);
+                                            }}
+                                        />
+                                        <span>
+                                            {message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* نمایش به‌صورت جدول در دسکتاپ */}
+                    <div className="hidden sm:block overflow-x-auto rounded-lg shadow-md">
                         <table className="w-full border-collapse bg-white dark:bg-gray-800">
                             <thead>
                                 <tr className="bg-[#174C72] text-white text-xs sm:text-sm">
                                     <th className="p-2 sm:p-3 text-right">اهمیت</th>
+                                    <th className="p-2 sm:p-3 text-right hidden lg:table-cell">ایجاد کننده</th>
                                     <th className="p-2 sm:p-3 text-right">شماره</th>
                                     <th className="p-2 sm:p-3 text-right">موضوع</th>
                                     <th className="p-2 sm:p-3 text-right hidden sm:table-cell">تاریخ ثبت</th>
-                                    <th className="p-2 sm:p-3 text-right hidden md:table-cell">امضا کننده</th>
-                                    <th className="p-2 sm:p-3 text-right hidden lg:table-cell">ایجاد کننده</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -510,6 +548,23 @@ const Mymessage = () => {
                                             <td className="p-2 sm:p-3">
                                                 <span className={`inline-block w-2 h-2 sm:w-3 sm:h-3 rounded-full ${importanceClass}`} />
                                             </td>
+                                            <td className="p-2 sm:p-3 hidden lg:table-cell">
+                                                <div className="flex items-center gap-2">
+                                                    <img
+                                                        src={message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg'}
+                                                        alt={message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                                        className="w-6 h-6 rounded-full bg-gray-300 border-2 border-gray-300 dark:border-gray-600 cursor-pointer"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setProfileImageUrl(message.user && message.user.profile ? `https://automationapi.satia.co/storage/${message.user.profile}` : '/picture/icons/profile.jpg');
+                                                            setShowProfileModal(true);
+                                                        }}
+                                                    />
+                                                    <span>
+                                                        {message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
+                                                    </span>
+                                                </div>
+                                            </td>
                                             <td className="p-2 sm:p-3">{message.number}</td>
                                             <td className="p-2 sm:p-3 max-w-[120px] sm:max-w-[200px] truncate">
                                                 <OverlayTrigger
@@ -520,12 +575,6 @@ const Mymessage = () => {
                                                 </OverlayTrigger>
                                             </td>
                                             <td className="p-2 sm:p-3 hidden sm:table-cell">{convertToJalali(message.registered_at)}</td>
-                                            <td className="p-2 sm:p-3 hidden md:table-cell">
-                                                {message.signatory ? `${message.signatory.first_name} ${message.signatory.last_name}` : 'نامشخص'}
-                                            </td>
-                                            <td className="p-2 sm:p-3 hidden lg:table-cell">
-                                                {message.user ? `${message.user.first_name} ${message.user.last_name}` : 'نامشخص'}
-                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -549,7 +598,6 @@ const Mymessage = () => {
                             <img src="/picture/icons/erja.svg" alt="ارجاع" className="w-5 h-5 sm:w-6 sm:h-6 mb-1" />
                             <span className="text-xs sm:text-sm text-gray-700 dark:text-black">ارجاع</span>
                         </button>
-                        
                         <button
                             onClick={handleView}
                             className="flex flex-col items-center justify-center p-2 bg-white dark:bg-gray-700 rounded-lg shadow-lg hover:-translate-y-1 transition-transform duration-200 w-full sm:w-24"
@@ -640,7 +688,6 @@ const Mymessage = () => {
                         toggle={() => setShowDeleteConfirm(false)}
                         handleDelete={handleDelete}
                     />
-
                     <InviteModal
                         isOpen={showInviteModal}
                         toggle={() => setShowInviteModal(false)}
@@ -652,18 +699,19 @@ const Mymessage = () => {
                         inviteMobile={inviteMobile}
                         setInviteMobile={setInviteMobile}
                     />
-
                     <SuccessModal
                         isOpen={showSuccessModal}
                         toggle={() => setShowSuccessModal(false)}
                     />
-
-                  
-
                     <ViewMessageModal
                         isOpen={showViewModal}
                         toggle={() => setShowViewModal(false)}
                         messageId={selectedMessageId}
+                    />
+                    <ProfileModal
+                        isOpen={showProfileModal}
+                        toggle={() => setShowProfileModal(false)}
+                        imageUrl={profileImageUrl}
                     />
                 </div>
             )}

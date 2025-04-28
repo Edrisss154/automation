@@ -23,14 +23,14 @@ const SecretariatSettings = () => {
         const fetchSecretariatSettings = async () => {
             try {
                 const data = await getSecretariatSettings();
-                console.log("Fetched Settings:", data);
+                //console.log("Fetched Settings:", data);
 
                 const settings = data.reduce((acc, setting) => {
                     acc[setting.key] = setting.value !== null ? setting.value : '';
                     return acc;
                 }, {});
 
-                console.log("Processed Settings:", settings);
+                //console.log("Processed Settings:", settings);
 
                 setFormData({
                     secretariat_name: settings.secretariat_name || '',
@@ -49,7 +49,7 @@ const SecretariatSettings = () => {
     }, []);
 
     useEffect(() => {
-        console.log("Form Data Updated:", formData);
+        //console.log("Form Data Updated:", formData);
     }, [formData]);
 
     const handleChange = (e) => {
@@ -86,13 +86,13 @@ const SecretariatSettings = () => {
                 }
             });
 
-            console.log('Sending FormData:');
+            //console.log('Sending FormData:');
             for (let [key, value] of formDataToSend.entries()) {
-                console.log(key, value);
+                //console.log(key, value);
             }
 
             const response = await saveSecretariatSettings(formDataToSend);
-            console.log('Response:', response);
+            //console.log('Response:', response);
             alert('تنظیمات دبیرخانه با موفقیت ذخیره شد!');
         } catch (error) {
             console.error('Error:', error);

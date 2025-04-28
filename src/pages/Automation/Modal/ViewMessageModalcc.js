@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import { handlePrint, handleDownloadPDF, handlePrintAndDownload } from './printUtils';
-import DocumentFlowModal from "./DocumentFlowModal";
+import DocumentFlowModal from "./DocumentFlowModalsend";
 
 const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) => {
     const [message, setMessage] = useState(null);
@@ -42,7 +42,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
 
             axios.get(`https://automationapi.satia.co/api/letters/${messageId}?token=${token}`)
                 .then(response => {
-                    console.log("Response from API:", response.data);
                     setMessage(response.data);
                     setSignature(response.data.signature);
                     setContent(response.data.content);

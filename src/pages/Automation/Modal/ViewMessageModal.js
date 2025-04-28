@@ -37,7 +37,6 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
             const token = localStorage.getItem('token');
             axios.get(`https://automationapi.satia.co/api/letters/${messageId}?token=${token}`)
                 .then(response => {
-                    console.log("Response from API:", response.data);
                     setMessage(response.data);
                     setSignature(response.data.signature);
                     setContent(response.data.content);

@@ -24,7 +24,7 @@ const useUserRoles = () => {
 
                 const response = await getUserById(signatoryIdFromLocalStorage);
                 if (response && response.roles) {
-                    console.log("Roles from API:", response.roles);
+                    //console.log("Roles from API:", response.roles);
                     setUserRoles(response.roles);
                     setSelectedRole(response.roles[0]?.id || '');
                 } else {
@@ -32,7 +32,7 @@ const useUserRoles = () => {
                     //alert("خطا در دریافت سمت‌های کاربر. لطفاً دوباره تلاش کنید.");
                 }
             } catch (error) {
-                console.error("Error fetching roles from API:", error);
+                //console.error("Error fetching roles from API:", error);
                 //alert("خطا در دریافت سمت‌های کاربر. لطفاً دوباره تلاش کنید.");
             }
         };

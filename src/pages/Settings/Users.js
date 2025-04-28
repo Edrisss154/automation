@@ -30,7 +30,6 @@ const UserSettings = () => {
         setLoading(true);
         try {
             const response = await getUsers(0, page, query);
-            console.log("Fetched Users:", response);
 
             if (response && response.data && Array.isArray(response.data)) {
                 setUsers(response.data);

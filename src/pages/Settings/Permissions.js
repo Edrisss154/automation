@@ -21,7 +21,6 @@ const PermissionSettings = () => {
         setLoading(true);
         try {
             const response = await getRoles(20, '');
-            console.log("Fetched Roles:", response);
 
             if (response && response.data && Array.isArray(response.data)) {
                 setPermissions(response.data);
@@ -41,7 +40,6 @@ const PermissionSettings = () => {
     const fetchPermissionGroups = async () => {
         try {
             const response = await getPermissions();
-            console.log("Fetched Permission Groups:", response);
             setPermissionGroups(response.data);
         } catch (error) {
             console.error('Error fetching permission groups:', error);

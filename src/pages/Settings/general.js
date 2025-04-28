@@ -33,14 +33,14 @@ const GeneralSettings = () => {
         const fetchGeneralSettings = async () => {
             try {
                 const data = await getGeneralSettings();
-                console.log("Fetched Settings:", data);
+                //console.log("Fetched Settings:", data);
 
                 const settings = data.reduce((acc, setting) => {
                     acc[setting.key] = setting.value || '';
                     return acc;
                 }, {});
 
-                console.log("Processed Settings:", settings);
+                //console.log("Processed Settings:", settings);
 
                 setFormData({
                     organization_name: settings.organization_name || '',
@@ -112,7 +112,7 @@ const GeneralSettings = () => {
             });
 
             const response = await saveGeneralSettings(formDataToSend);
-            console.log('Response:', response);
+            //console.log('Response:', response);
             alert('تنظیمات با موفقیت ذخیره شد!');
         } catch (error) {
             console.error('Error:', error);

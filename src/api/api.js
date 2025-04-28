@@ -18,7 +18,6 @@ const login = (mobile, password) => {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
     }).then(response => {
-        console.log("پاسخ لاگین API:", response.data);
         return response;
     });
 };
@@ -45,7 +44,7 @@ const getLetters = (page, referralType = 'none') => {
             referral_type: referralType
         }
     }).then(response => {
-        console.log("Response from getLetters API:", response.data);
+        //console.log("Response from getLetters API:", response.data);
         if (Array.isArray(response.data.data)) {
             return {
                 data: response.data.data,
@@ -65,7 +64,7 @@ const kartablsearch = (page, searchParams = {}) => {
             ...searchParams
         }
     }).then(response => {
-        console.log("Response from getLetters API:", response.data);
+        //console.log("Response from getLetters API:", response.data);
         if (Array.isArray(response.data.data)) {
             return {
                 data: response.data.data,
@@ -86,7 +85,7 @@ const kartablsearchmymessage = (page, referralType, searchParams = {}) => {
             ...searchParams
         }
     }).then(response => {
-        console.log("Response from getLetters API:", response.data);
+        //console.log("Response from getLetters API:", response.data);
         if (Array.isArray(response.data.data)) {
             return {
                 data: response.data.data,
@@ -106,7 +105,7 @@ const getLettersreceived = (page, referralType = 'received') => {
             referral_type: referralType
         }
     }).then(response => {
-        console.log("Response from getLetters API:", response.data);
+        //console.log("Response from getLetters API:", response.data);
         if (Array.isArray(response.data.data)) {
             return {
                 data: response.data.data,
@@ -125,7 +124,7 @@ const getLettersCC = (page, referralType = 'cc') => {
             referral_type: referralType
         }
     }).then(response => {
-        console.log("Response from getLetters API:", response.data);
+        //console.log("Response from getLetters API:", response.data);
         if (Array.isArray(response.data.data)) {
             return {
                 data: response.data.data,
@@ -144,7 +143,7 @@ const getLetterssend = (page, referralType = 'sent') => {
             referral_type: referralType
         }
     }).then(response => {
-        console.log("Response from getLetters API:", response.data);
+        //console.log("Response from getLetters API:", response.data);
         if (Array.isArray(response.data.data)) {
             return {
                 data: response.data.data,
@@ -160,7 +159,7 @@ const deleteLetter = (id) => {
     const token = localStorage.getItem('token');
     return instance.delete(`/api/letters/${id}?token=${token}`)
         .then(response => {
-            console.log("Response from deleteLetter API:", response.data);
+            //console.log("Response from deleteLetter API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -173,7 +172,7 @@ const addLetter = (data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/letters?token=${token}`, data)
         .then(response => {
-            console.log("Response from server:", response.data);
+            //console.log("Response from server:", response.data);
             return response;
         })
         .catch(error => {
@@ -196,7 +195,6 @@ const getLetterDetails = (id) => {
     return instance.get(`/api/letters/${id}?token=${token}`)
         .then(response => {
             if (response.status === 200) {
-                console.log("Response from getLetterDetails API:", response.data);
                 return response.data;
             } else {
                 throw new Error(`Unexpected status code: ${response.status}`);
@@ -211,7 +209,7 @@ const getLetterDetails = (id) => {
 const updateLetter = (id, data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/letters/${id}?token=${token}`, data).then(response => {
-        console.log("Response from updateLetter API:", response.data);
+        //console.log("Response from updateLetter API:", response.data);
         return response.data;
     }).catch(error => {
         console.error("Error from updateLetter API:", error.response?.data || error.message);
@@ -222,7 +220,7 @@ const updateLetter = (id, data) => {
 const updateLetterreferer = (id, data) => {
     const token = localStorage.getItem('token');
     return instance.put(`/api/letters/${id}?token=${token}`, data).then(response => {
-        console.log("Response from updateLetter API:", response.data);
+        //console.log("Response from updateLetter API:", response.data);
         return response.data;
     }).catch(error => {
         console.error("Error from updateLetter API:", error.response?.data || error.message);
@@ -233,7 +231,7 @@ const updateLetterreferer = (id, data) => {
 const getGeneralSettings = () => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/general?token=${token}`).then(response => {
-        console.log("Response from getGeneralSettings API:", response.data);
+        //console.log("Response from getGeneralSettings API:", response.data);
         return response.data;
     });
 };
@@ -242,7 +240,7 @@ const saveGeneralSettings = (data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/general?token=${token}`, data)
         .then(response => {
-            console.log("Response from saveGeneralSettings API:", response.data);
+            //console.log("Response from saveGeneralSettings API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -254,7 +252,7 @@ const saveGeneralSettings = (data) => {
 const getSecretariatSettings = () => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/secretariat?token=${token}`).then(response => {
-        console.log("Response from getSecretariatSettings API:", response.data);
+        //console.log("Response from getSecretariatSettings API:", response.data);
         return response.data;
     });
 };
@@ -263,7 +261,7 @@ const saveSecretariatSettings = (data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/secretariat?token=${token}`, data)
         .then(response => {
-            console.log("Response from saveSecretariatSettings API:", response.data);
+            //console.log("Response from saveSecretariatSettings API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -275,7 +273,7 @@ const saveSecretariatSettings = (data) => {
 const getEmailServerSettings = () => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/email-server?token=${token}`).then(response => {
-        console.log("Response from getEmailServerSettings API:", response.data);
+        //console.log("Response from getEmailServerSettings API:", response.data);
         return response.data;
     });
 };
@@ -284,7 +282,7 @@ const saveEmailServerSettings = (data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/email-server?token=${token}`, data)
         .then(response => {
-            console.log("Response from saveEmailServerSettings API:", response.data);
+            //console.log("Response from saveEmailServerSettings API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -296,7 +294,7 @@ const saveEmailServerSettings = (data) => {
 const getOasSettings = () => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/oas?token=${token}`).then(response => {
-        console.log("Response from getOasSettings API:", response.data);
+        //console.log("Response from getOasSettings API:", response.data);
         return response.data;
     });
 };
@@ -305,7 +303,7 @@ const saveOasSettings = (data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/oas?token=${token}`, data)
         .then(response => {
-            console.log("Response from saveOasSettings API:", response.data);
+            //console.log("Response from saveOasSettings API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -317,7 +315,7 @@ const saveOasSettings = (data) => {
 const getLetterTemplates = (page = 1) => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/letter-templates?token=${token}&page=${page}`).then(response => {
-        console.log("Response from getLetterTemplates API:", response.data);
+        //console.log("Response from getLetterTemplates API:", response.data);
         return response.data;
     });
 };
@@ -326,7 +324,7 @@ const saveLetterTemplate = (data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/letter-templates?token=${token}`, data)
         .then(response => {
-            console.log("Response from saveLetterTemplate API:", response.data);
+            //console.log("Response from saveLetterTemplate API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -338,7 +336,7 @@ const saveLetterTemplate = (data) => {
 const getLetterTemplateById = (id) => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/letter-templates/${id}?token=${token}`).then(response => {
-        console.log("Response from getLetterTemplateById API:", response.data);
+        //console.log("Response from getLetterTemplateById API:", response.data);
         return response.data;
     });
 };
@@ -347,7 +345,7 @@ const updateLetterTemplate = (id, data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/letter-templates/${id}?token=${token}`, data)
         .then(response => {
-            console.log("Response from updateLetterTemplate API:", response.data);
+            //console.log("Response from updateLetterTemplate API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -360,7 +358,7 @@ const deleteLetterTemplate = (id) => {
     const token = localStorage.getItem('token');
     return instance.delete(`/api/settings/letter-templates/${id}?token=${token}`)
         .then(response => {
-            console.log("Response from deleteLetterTemplate API:", response.data);
+            //console.log("Response from deleteLetterTemplate API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -373,7 +371,6 @@ const referLetter = (letterId, data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/letters/${letterId}/referring?token=${token}`, data)
         .then(response => {
-            console.log("Response from referLetter API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -386,7 +383,7 @@ const addFootnote = (letterId, data) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/letters/${letterId}/footnotes?token=${token}`, data)
         .then(response => {
-            console.log("Response from addFootnote API:", response.data);
+            //console.log("Response from addFootnote API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -399,7 +396,7 @@ const getUnreadLettersCount = () => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/letters/count?token=${token}`)
         .then(response => {
-            console.log("Response from getUnreadLettersCount API:", response.data);
+            //console.log("Response from getUnreadLettersCount API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -418,7 +415,7 @@ const getUsers = (isContact = 0, page = 1, q = '') => {
         }
     })
         .then(response => {
-            console.log("Fetched Users:", response.data);
+            //console.log("Fetched Users:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -447,7 +444,7 @@ const getContact = (isContact = 1, page = 1, q = '') => {
         }
     })
         .then(response => {
-            console.log("Fetched Users:", response.data);
+            //console.log("Fetched Users:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -460,7 +457,6 @@ const getUserById = (id) => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/users/${id}?token=${token}`)
         .then(response => {
-            //console.log("Response from getUserById API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -473,7 +469,6 @@ const getContactById = (id) => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/users/${id}?token=${token}`)
         .then(response => {
-            console.log("Response from getUserById API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -491,7 +486,7 @@ const getRoles = (perPage = 20, name = '') => {
         }
     })
         .then(response => {
-            console.log("Response from getRoles API:", response.data);
+            //console.log("Response from getRoles API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -504,7 +499,7 @@ const getPermissions = () => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/permission-groups?token=${token}`)
         .then(response => {
-            console.log("Response from getPermissionGroups API:", response.data);
+            //console.log("Response from getPermissionGroups API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -517,7 +512,7 @@ const getRoleDetails = (id) => {
     const token = localStorage.getItem('token');
     return instance.get(`/api/settings/roles/${id}?token=${token}`)
         .then(response => {
-            console.log("Response from getRoleDetails API:", response.data);
+            //console.log("Response from getRoleDetails API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -530,7 +525,7 @@ const addRole = (name) => {
     const token = localStorage.getItem('token');
     return instance.post(`/api/settings/roles?token=${token}`, { name })
         .then(response => {
-            console.log("Response from addRole API:", response.data);
+            //console.log("Response from addRole API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -543,7 +538,7 @@ const updateRole = (id, name) => {
     const token = localStorage.getItem('token');
     return instance.put(`/api/settings/roles/${id}?token=${token}`, { name })
         .then(response => {
-            console.log("Response from updateRole API:", response.data);
+            //console.log("Response from updateRole API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -556,7 +551,7 @@ const deleteRole = (id) => {
     const token = localStorage.getItem('token');
     return instance.delete(`/api/settings/roles/${id}?token=${token}`)
         .then(response => {
-            console.log("Response from deleteRole API:", response.data);
+            //console.log("Response from deleteRole API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -570,7 +565,7 @@ const deleteRole = (id) => {
 
      return instance.post(`/api/settings/roles/${id}/permissions?token=${token}`, { permissions })
         .then(response => {
-            console.log("Response from updateRolePermissions API:", response.data);
+            //console.log("Response from updateRolePermissions API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -593,7 +588,7 @@ const addContact = (data) => {
         },
     } )
         .then(response => {
-            console.log("Response from server:", response.data);
+            //console.log("Response from server:", response.data);
             return response;
         })
         .catch(error => {
@@ -616,7 +611,7 @@ const getProvinces = () => {
 
     return instance.get(`/api/provinces?token=${token}`)
         .then(response => {
-            console.log("Response from getProvinces API:", response.data);
+            //console.log("Response from getProvinces API:", response.data);
             return response.data;
         })
         .catch(error => {
@@ -630,7 +625,7 @@ const getCities = (provinceId) => {
 
     return instance.get(`/api/provinces/${provinceId}/cities?token=${token}`)
         .then(response => {
-            console.log("Response from getCities API:", response.data);
+            //console.log("Response from getCities API:", response.data);
             return response.data;
         })
         .catch(error => {

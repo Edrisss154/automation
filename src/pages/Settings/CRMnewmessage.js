@@ -355,7 +355,7 @@ const CRMNewMessage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+    
     try {
       const token = localStorage.getItem('interorganizational_token');
       const submitFormData = new FormData();

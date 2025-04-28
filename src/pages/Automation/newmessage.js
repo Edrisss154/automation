@@ -337,8 +337,7 @@ const userIdMapping = JSON.parse(process.env.REACT_APP_USER_ID_MAPPING || "{}");
 const getCrmUserId = (localId) => {
   return userIdMapping[localId] || localId; // اگر ID در نگاشت نبود، همان ID محلی را برگردان
 };
-console.log("REACT_APP_VAHID_ID:", process.env.REACT_APP_VAHID_ID);
-console.log("REACT_APP_USER_ID_MAPPING:", process.env.REACT_APP_USER_ID_MAPPING);
+
 const createTaskInCRM = async (letterData) => {
   try {
     const token = localStorage.getItem("interorganizational_token");
