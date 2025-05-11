@@ -571,21 +571,21 @@ const handleSubmit = async () => {
       const shouldCreateTask = isVahidRecipient;
   
       // لاگ برای دیباگ
-      console.log("handleReferSubmit - importanceLevel1:", importanceLevel1);
-      console.log("handleReferSubmit - toUserId:", toUserId);
-      console.log("handleReferSubmit - selectedToUser:", selectedToUser);
-      console.log("handleReferSubmit - referData:", referData);
+      // console.log("handleReferSubmit - importanceLevel1:", importanceLevel1);
+      // console.log("handleReferSubmit - toUserId:", toUserId);
+      // console.log("handleReferSubmit - selectedToUser:", selectedToUser);
+      // console.log("handleReferSubmit - referData:", referData);
       console.log(
         "handleReferSubmit - carbonCopy:",
         carbonCopy.map((user) => ({ id: user.id, name: `${user.first_name} ${user.last_name}` }))
-      );
-      console.log("handleReferSubmit - isVahidRecipient:", isVahidRecipient);
-      console.log("handleReferSubmit - shouldCreateTask:", shouldCreateTask);
+       );
+      // console.log("handleReferSubmit - isVahidRecipient:", isVahidRecipient);
+      // console.log("handleReferSubmit - shouldCreateTask:", shouldCreateTask);
   
       if (shouldCreateTask) {
-        console.log("Sending task to CRM for Vahid...");
-        console.log("CRM token:", localStorage.getItem("interorganizational_token"));
-        console.log("CRM User ID:", getCrmUserId(vahidId));
+        // console.log("Sending task to CRM for Vahid...");
+        // console.log("CRM token:", localStorage.getItem("interorganizational_token"));
+        // console.log("CRM User ID:", getCrmUserId(vahidId));
         await createTaskInCRM({
           subject,
           content: cleanedEditorValue,

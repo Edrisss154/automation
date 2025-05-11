@@ -478,7 +478,7 @@ const MilkyWaySolarSystem = () => {
                 <p className="text-white mt-2">برای زوم روی سیارات دوبار کلیک کنید!</p>
                 <p className="text-white mt-2">برای اطلاعات سیاره یک‌بار کلیک کنید!</p>
             </div>
-        </div>
+        </div> 
     );
 };
 

@@ -5,11 +5,11 @@ const Home = () => {
     const navigate = useNavigate();
 
     const menuItems = [
-        { title: "دبیرخانه", description: "دبیرخانه", icon: "/picture/icons/dept.svg", path: "/Hooby" },
+        { title: "دبیرخانه", description: "دبیرخانه", icon: "/picture/icons/dept.svg", path: "/" },
         { title: "اتوماسیون", description: "اتوماسیون", icon: "/picture/icons/automation.svg", path: "/automation" },
-        { title: "داشبورد", description: "داشبورد", icon: "/picture/icons/dashboard.svg", path: "/Hooby" },
-        { title: "راهنما", description: "راهنما", icon: "/picture/icons/help.svg", path: "/help" },
-        { title: "فکس و ایمیل", description: "فکس و ایمیل", icon: "/picture/icons/email.svg", path: "/Hooby" },
+        { title: "داشبورد", description: "داشبورد", icon: "/picture/icons/dashboard.svg", path: "/dashboard" },
+        { title: "راهنما", description: "راهنما", icon: "/picture/icons/help.svg", path: "/HelpPage" },
+        { title: "فکس و ایمیل", description: "فکس و ایمیل", icon: "/picture/icons/email.svg", path: "/" },
         { title: "تنظیمات", description: "تنظیمات", icon: "/picture/icons/settings.svg", path: "/settings" },
     ];
 

@@ -49,7 +49,7 @@ const Sidebar = ({ isMenuOpen, toggleMenu }) => {
             )}
             
             <div
-                className={`fixed top-[60px] w-[80%] md:w-[300px] lg:w-[250px] h-[calc(100vh-60px)]
+                className={`fixed top-[50px] w-[80%] md:w-[300px] lg:w-[250px] h-[calc(100vh-60px)]
                            bg-gray-50 dark:bg-black shadow-[0_2px_10px_rgba(0,0,0,0.1)] z-[100] 
                            flex flex-col pt-2 px-4 transition-all duration-300 ease-in-out 
                            ${isSidebarOpen ? "right-0" : "right-[-100%]"}
@@ -70,6 +70,14 @@ const Sidebar = ({ isMenuOpen, toggleMenu }) => {
                     >
                         <img src="/picture/icons/home.png" alt="صفحه اصلی" className="w-6 h-6 ml-2.5" />
                         <span className="text-sm text-[#333] dark:text-white">صفحه اصلی</span>
+                    </li>
+
+                    <li
+                        className={menuItemClasses}
+                        onClick={() => handleNavigation("/dashboard")}
+                    >
+                        <img src="/picture/icons/dashboard.svg" alt="صفحه اصلی" className="w-6 h-6 ml-2.5" />
+                        <span className="text-sm text-[#333] dark:text-white">داشبورد</span>
                     </li>
 
                 {/* Automation Menu */}
@@ -221,14 +229,14 @@ const Sidebar = ({ isMenuOpen, toggleMenu }) => {
                     {/* Other Menu Items */}
                     <li
                         className={menuItemClasses}
-                        onClick={() => handleNavigation("/Hooby")}
+                        onClick={() => handleNavigation("/")}
                     >
                         <img src="/picture/icons/email.svg" alt="فکس و ایمیل" className="w-6 h-6 ml-2.5" />
                         <span className="text-sm text-[#333] dark:text-white">فکس و ایمیل</span>
                     </li>
                     <li
                         className={menuItemClasses}
-                        onClick={() => handleNavigation("/help")}
+                        onClick={() => handleNavigation("/HelpPage")}
                     >
                         <img src="/picture/icons/help.svg" alt="راهنما" className="w-6 h-6 ml-2.5" />
                         <span className="text-sm text-[#333] dark:text-white">راهنما</span>

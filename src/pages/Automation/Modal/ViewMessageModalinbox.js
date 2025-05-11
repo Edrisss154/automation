@@ -30,6 +30,8 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
     const [showImageModal, setShowImageModal] = useState(false);
     const [selectedAttachmentIndex, setSelectedAttachmentIndex] = useState(0);
     const togglePrivateNote = () => setPrivateNoteOpen(!isPrivateNoteOpen);
+    const [letterTemplate, setLetterTemplate] = useState(null);
+
     const formatDateTime = (dateTime) => {
         const date = new Date(dateTime);
         return date.toLocaleString('fa-IR', {
@@ -53,6 +55,14 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
                 })
                 .catch(error => {
                     console.error("Error fetching message details:", error);
+                });
+
+                axios.get(`https://automationapi.satia.co/api/settings/letter-templates/11?token=${token}`)
+                .then(response => {
+                    setLetterTemplate(response.data);
+                })
+                .catch(error => {
+                    console.error("Error fetching letter template:", error);
                 });
         }
     }, [messageId]);
@@ -378,7 +388,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId,selectedRole,userRoles }) 
                             <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                                 <div className="flex flex-wrap gap-2 justify-end">
                                     <button
-                                        onClick={() => handlePrintAndDownload(message, setPrintLoading)}
+                                        onClick={() => handlePrintAndDownload(message, setPrintLoading,letterTemplate)}
                                         disabled={isPrintLoading}
                                         className="bg-[rgba(23,76,114,1)] hover:bg-[rgba(18,60,90,1)] text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 shadow-sm"
                                     >

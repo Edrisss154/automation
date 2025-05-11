@@ -97,63 +97,78 @@ const kartablsearchmymessage = (page, referralType, searchParams = {}) => {
     });
 };
 
-const getLettersreceived = (page, referralType = 'received') => {
+const getLettersreceived = async (page, referralType = 'received', perPage = 10) => {
     const token = localStorage.getItem('token');
-    return instance.get(`/api/letters?token=${token}`, {
+    const response = await instance.get(`/api/letters?token=${token}`, {
         params: {
             page: page,
             referral_type: referralType
         }
-    }).then(response => {
-        //console.log("Response from getLetters API:", response.data);
-        if (Array.isArray(response.data.data)) {
-            return {
-                data: response.data.data,
-                total_pages: response.data.last_page
-            };
-        } else {
-            throw new Error("Unexpected response format");
-        }
     });
+
+    if (Array.isArray(response.data.data)) {
+        const totalPages = response.data.last_page;
+        const currentPageCount = response.data.data.length;
+        const totalCount = perPage * (totalPages - 1) + currentPageCount;
+
+        return {
+            data: response.data.data,
+            total_pages: totalPages,
+            total_count: totalCount
+        };
+    } else {
+        throw new Error("Unexpected response format");
+    }
 };
-const getLettersCC = (page, referralType = 'cc') => {
+
+const getLettersCC = async (page, referralType = 'cc') => {
     const token = localStorage.getItem('token');
-    return instance.get(`/api/letters?token=${token}`, {
+    const response = await instance.get(`/api/letters?token=${token}`, {
         params: {
             page: page,
             referral_type: referralType
         }
-    }).then(response => {
-        //console.log("Response from getLetters API:", response.data);
-        if (Array.isArray(response.data.data)) {
-            return {
-                data: response.data.data,
-                total_pages: response.data.last_page
-            };
-        } else {
-            throw new Error("Unexpected response format");
-        }
     });
+
+    if (Array.isArray(response.data.data)) {
+        const totalPages = response.data.last_page;
+        const perPage = response.data.data.length;
+        const totalCount = perPage * (totalPages - 1) + perPage;
+
+        return {
+            data: response.data.data,
+            total_pages: totalPages,
+            total_count: totalCount
+        };
+    } else {
+        throw new Error("Unexpected response format");
+    }
 };
-const getLetterssend = (page, referralType = 'sent') => {
+
+const getLetterssend = async (page, referralType = 'sent') => {
     const token = localStorage.getItem('token');
-    return instance.get(`/api/letters?token=${token}`, {
+    const response = await instance.get(`/api/letters?token=${token}`, {
         params: {
             page: page,
             referral_type: referralType
         }
-    }).then(response => {
-        //console.log("Response from getLetters API:", response.data);
-        if (Array.isArray(response.data.data)) {
-            return {
-                data: response.data.data,
-                total_pages: response.data.last_page
-            };
-        } else {
-            throw new Error("Unexpected response format");
-        }
     });
+
+    if (Array.isArray(response.data.data)) {
+        const totalPages = response.data.last_page;
+        const perPage = response.data.data.length;
+        const totalCount = perPage * (totalPages - 1) + perPage;
+
+        return {
+            data: response.data.data,
+            total_pages: totalPages,
+            total_count: totalCount
+        };
+    } else {
+        throw new Error("Unexpected response format");
+    }
 };
+
 
 const deleteLetter = (id) => {
     const token = localStorage.getItem('token');
@@ -397,13 +412,15 @@ const getUnreadLettersCount = () => {
     return instance.post(`/api/letters/count?token=${token}`)
         .then(response => {
             //console.log("Response from getUnreadLettersCount API:", response.data);
-            return response.data;
+            return response.data.count; // فقط count رو بده
         })
         .catch(error => {
             console.error("Error from getUnreadLettersCount API:", error.response?.data || error.message);
             throw error;
         });
 };
+
+
 
 const getUsers = (isContact = 0, page = 1, q = '') => {
     const token = localStorage.getItem('token');

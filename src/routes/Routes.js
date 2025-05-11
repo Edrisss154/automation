@@ -2,6 +2,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Dashboard from "../pages/Dashboard";
+import HelpPage from "../pages/HelpPage";
+
 import Automation from "../pages/Automation";
 import Settings from "../pages/Settings";
 import Newmessage from "../pages/Automation/newmessage";
@@ -29,12 +31,15 @@ import Hooby from "../Login";
 
 
 
+
 const AppRoutes = () => {
     return (
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/HelpPage" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
+
             <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
             <Route path="/Hooby" element={<ProtectedRoute><Hooby /></ProtectedRoute>} />
 

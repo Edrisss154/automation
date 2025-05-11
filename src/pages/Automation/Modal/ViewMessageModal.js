@@ -40,12 +40,18 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                     setMessage(response.data);
                     setSignature(response.data.signature);
                     setContent(response.data.content);
-                    // getLetterTemplateById(1).then(template => {
-                    //     setLetterTemplate(template);
-                    // });
                 })
                 .catch(error => {
                     console.error("Error fetching message details:", error);
+                });
+    
+            // Fetch letter template
+            axios.get(`https://automationapi.satia.co/api/settings/letter-templates/11?token=${token}`)
+                .then(response => {
+                    setLetterTemplate(response.data);
+                })
+                .catch(error => {
+                    console.error("Error fetching letter template:", error);
                 });
         }
     }, [messageId]);
@@ -309,7 +315,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                                     onClick={toggle}
                                     className="text-white hover:text-gray-200 transition-colors"
                                 >
-                                    &times;
+                                    ×
                                 </button>
                             </div>
 
@@ -466,7 +472,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                             <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                                 <div className="flex flex-wrap gap-2 justify-end">
                                     <button
-                                        onClick={() => handlePrintAndDownload(message, setPrintLoading)}
+                                        onClick={() => handlePrintAndDownload(message, setPrintLoading, letterTemplate)}
                                         disabled={isPrintLoading}
                                         className="bg-[rgba(23,76,114,1)] hover:bg-[rgba(18,60,90,1)] text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 shadow-sm"
                                     >
@@ -480,13 +486,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                                         ویرایش
                                     </button>
                                         
-                                    <button
-                                        onClick={() => setShowDocumentFlowModal(true)}
-                                        className="bg-[rgba(23,76,114,1)] hover:bg-[rgba(18,60,90,1)] text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-sm"
-                                    >
-                                        <img src="/picture/icons/Group.svg" alt="گردش سند" className="w-5 h-5"/>
-                                        گردش سند
-                                    </button>
+                                  
                                     <button
                                         onClick={() => setShowAttachmentModal(true)}
                                         className="bg-[rgba(23,76,114,1)] hover:bg-[rgba(18,60,90,1)] text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-sm"
@@ -523,7 +523,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                                     onClick={closeImageModal}
                                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                                 >
-                                    &times;
+                                    ×
                                 </button>
                             </div>
 
@@ -535,7 +535,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                                             onClick={prevImage}
                                             disabled={selectedAttachmentIndex === 0}
                                         >
-                                            &#10094;
+                                            ❮
                                         </button>
                                         <img
                                             src={images[selectedAttachmentIndex].attachmentable.url}
@@ -547,7 +547,7 @@ const ViewMessageModal = ({ isOpen, toggle, messageId }) => {
                                             onClick={nextImage}
                                             disabled={selectedAttachmentIndex === images.length - 1}
                                         >
-                                            &#10095;
+                                            ❯
                                         </button>
                                     </div>
                                 )}
